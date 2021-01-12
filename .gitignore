@@ -2,3 +2,7 @@
 roms/
 *.lst
 *.binary
+*.bin
+*.p2asm
+*.txt
+*.obj
