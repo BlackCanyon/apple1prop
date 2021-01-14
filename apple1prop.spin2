@@ -181,8 +181,17 @@ pub cpuTick()
     if (RAM_S <= addr && RAM_E >= addr)
       ram[addr-RAM_S] := dataIn
     elseif (IO_S <= addr && IO_E >= addr)
-      
-
+      if (addr == PIA_KBD)
+        kbdChar := pinr(23..16)
+      elseif (addr == PIA_KBD_CR)
+        kbdCR := (pinr(23..16) & $7F)
+      elseif (addr == PIA_TERM)
+        if (pinr(23..16) == $8D)
+          term.str("\r\n")
+        else
+          term.tx((pinr(23..16) & $7F))
+      elseif (addr == PIA_TERM_CR)
+        termCR := pinr(23..16)
 
   PINL(PIN_CLK)
 
@@ -196,6 +205,10 @@ pub setup()
 
   term.tstart(BR_TERM)                                          ' start terminal io
 
+  pinl(PIN_RESET)
+  repeat 10
+    cpuTick()
+  pinh(PIN_RESET)
 
 pub wait_for_terminal(clear)
 
